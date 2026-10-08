@@ -1,0 +1,863 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>FNB Festive Media Model</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800&family=Nunito+Sans:wght@400;600;700&display=swap">
+<style>
+/* Layout: a dark FNB masthead with the live answer, a sticky lever panel on the left and the plan outputs on the right */
+:root {
+  --teal: #00A9AC; --teal-dk: #007A7C; --ink: #0F1B1C; --amber: #FA9D1E; --amber-dk: #8A4B00;
+  --bg: #F5F6F4; --surface: #FFFFFF; --surface-2: #EEF3F2; --line: #DDE4E2; --fg: #0F1B1C; --body: #3A4443; --muted: #6E7776;
+  --pale: #DFF1F1; --amber-pale: #FDEBD0; --mast: #0F1B1C; --mast-fg: #F5F6F4; --mast-muted: #9FB3B1; --chart-fill: rgba(0,169,172,.12);
+  --display: 'Nunito', 'Trebuchet MS', Arial, sans-serif; --text: 'Nunito Sans', 'Segoe UI', Arial, sans-serif;
+  --r: 14px;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --teal: #2CC4C6; --teal-dk: #4FD3D4; --ink: #E8EEED; --amber: #FFB547; --amber-dk: #FFC978;
+  --bg: #0E1617; --surface: #152022; --surface-2: #1B292B; --line: #2A3A3C; --fg: #E8EEED; --body: #C5D0CE; --muted: #8FA09E;
+  --pale: #123638; --amber-pale: #3A2A10; --mast: #081011; --mast-fg: #F5F6F4; --mast-muted: #8FA6A4; --chart-fill: rgba(44,196,198,.14); color-scheme: dark } }
+:root[data-theme="dark"] {
+  --teal: #2CC4C6; --teal-dk: #4FD3D4; --ink: #E8EEED; --amber: #FFB547; --amber-dk: #FFC978;
+  --bg: #0E1617; --surface: #152022; --surface-2: #1B292B; --line: #2A3A3C; --fg: #E8EEED; --body: #C5D0CE; --muted: #8FA09E;
+  --pale: #123638; --amber-pale: #3A2A10; --mast: #081011; --mast-fg: #F5F6F4; --mast-muted: #8FA6A4; --chart-fill: rgba(44,196,198,.14); color-scheme: dark }
+* { box-sizing: border-box }
+[hidden] { display: none !important }
+body { background: var(--bg); color: var(--body); font-family: var(--text); font-size: 15px; line-height: 1.45; margin: 0 }
+h1, h2, h3 { font-family: var(--display); color: var(--fg); margin: 0; text-wrap: balance }
+.num { font-variant-numeric: tabular-nums }
+.mast { background: var(--mast); color: var(--mast-fg); padding-block: 28px 30px; padding-inline: max(16px, 4vw) }
+.mast .eyebrow { font-weight: 700; letter-spacing: .16em; font-size: 12px; color: var(--teal); text-transform: uppercase }
+.mast h1 { color: var(--mast-fg); font-size: clamp(24px, 3vw, 36px); line-height: 1.18; margin-top: 10px; max-width: 48ch }
+.mast p { color: var(--mast-muted); margin: 10px 0 0; max-width: 70ch }
+.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-top: 22px }
+.kpi { background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1); border-radius: var(--r); padding: 14px 16px }
+.kpi .lab { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--mast-muted); font-weight: 700 }
+.kpi .val { font-family: var(--display); font-weight: 800; font-size: 32px; color: var(--mast-fg); margin-top: 4px }
+.kpi.rec .val { color: var(--amber) }
+.kpi .sub { font-size: 13px; color: var(--mast-muted); margin-top: 2px }
+.wrap { display: grid; grid-template-columns: minmax(300px, 380px) minmax(0, 1fr); gap: 24px; padding-block: 24px 48px; padding-inline: max(16px, 4vw); align-items: start }
+@media (max-width: 900px) { .wrap { grid-template-columns: minmax(0, 1fr) } .panel { position: static !important; max-height: none !important } }
+.panel { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 12px); background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); max-height: calc(100vh - 24px); overflow: auto }
+.tabs { display: flex; flex-wrap: wrap; gap: 4px; padding: 10px; border-bottom: 1px solid var(--line); position: sticky; top: 0; background: var(--surface); z-index: 2 }
+.tab { border: 0; background: transparent; color: var(--muted); font: 700 13px var(--text); padding: 7px 10px; border-radius: 8px; cursor: pointer }
+.tab[aria-selected="true"] { background: var(--pale); color: var(--teal-dk) }
+.tab:focus-visible, button:focus-visible, input:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px }
+.pane { padding: 16px; display: grid; gap: 14px }
+.pane h3 { font-size: 16px }
+.hint { font-size: 13px; color: var(--muted); margin: 0 }
+.ctl { display: grid; gap: 4px }
+.ctl-top { display: flex; justify-content: space-between; align-items: baseline; gap: 8px }
+.ctl-top label { font-weight: 700; color: var(--fg); font-size: 14px }
+.ctl-top output { font-weight: 700; color: var(--teal-dk); font-variant-numeric: tabular-nums; font-size: 14px; white-space: nowrap }
+.ctl .why { font-size: 12.5px; color: var(--muted) }
+input[type=range] { width: 100%; accent-color: var(--teal) }
+input[type=number] { width: 90px; font: 600 14px var(--text); padding: 5px 8px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); color: var(--fg) }
+.row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center }
+.btn { border: 1px solid var(--line); background: var(--surface); color: var(--fg); font: 700 13px var(--text); padding: 8px 12px; border-radius: 999px; cursor: pointer }
+.btn.on { background: var(--teal-dk); border-color: var(--teal-dk); color: #fff }
+.btn.ghost { color: var(--teal-dk) }
+.aud { border-top: 1px solid var(--line); padding-top: 12px; display: grid; gap: 8px }
+.aud-head { display: flex; justify-content: space-between; align-items: center; gap: 8px }
+.aud-head b { color: var(--fg) }
+.switch { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--muted); cursor: pointer }
+.switch input { accent-color: var(--teal) }
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px }
+.out { display: grid; gap: 20px; min-width: 0 }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 18px 20px; min-width: 0 }
+.card h2 { font-size: 20px; line-height: 1.25 }
+.card .lead { margin: 6px 0 0; color: var(--body); max-width: 75ch }
+.ar .status { justify-self: end }
+.status { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; font-weight: 700; padding: 3px 10px; border-radius: 999px; white-space: nowrap }
+.ok { background: var(--pale); color: var(--teal-dk) }
+.warn { background: var(--amber-pale); color: var(--amber-dk) }
+.busy { font-size: 12.5px; color: var(--muted); display: inline-flex; gap: 6px; align-items: center }
+.dot { width: 8px; height: 8px; border-radius: 50%; background: var(--teal); animation: pulse 1s infinite }
+@keyframes pulse { 50% { opacity: .25 } }
+@media (prefers-reduced-motion: reduce) { .dot { animation: none } }
+.chart { width: 100%; height: auto; display: block; margin-top: 12px }
+.legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: 13px; margin-top: 6px }
+.legend span { display: inline-flex; align-items: center; gap: 6px }
+.sw { width: 12px; height: 12px; border-radius: 3px; display: inline-block }
+.aud-rows { display: grid; gap: 2px; margin-top: 10px }
+.ar { display: grid; grid-template-columns: minmax(150px, 1.1fr) minmax(0, 2.4fr) 150px; gap: 14px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--line) }
+.ar .nm b { color: var(--fg); display: block }
+.ar .nm span { font-size: 12.5px; color: var(--muted) }
+.bars { display: grid; gap: 6px }
+.bl { display: grid; grid-template-columns: 52px minmax(0, 1fr) 118px; gap: 8px; align-items: center; font-size: 12.5px }
+.track { position: relative; height: 14px; background: var(--surface-2); border-radius: 4px }
+.fill { position: absolute; left: 0; top: 0; bottom: 0; background: var(--teal-dk); border-radius: 4px }
+.mark { position: absolute; top: -4px; bottom: -4px; width: 3px; background: var(--amber); border-radius: 2px }
+@media (max-width: 620px) { .ar { grid-template-columns: minmax(0, 1fr) } }
+.seg { display: inline-flex; background: var(--surface-2); border-radius: 999px; padding: 3px; gap: 2px }
+.seg button { border: 0; background: transparent; font: 700 12.5px var(--text); color: var(--muted); padding: 6px 12px; border-radius: 999px; cursor: pointer }
+.seg button[aria-pressed="true"] { background: var(--surface); color: var(--teal-dk); box-shadow: 0 1px 2px rgba(0,0,0,.12) }
+.stack { display: flex; height: 30px; border-radius: 6px; overflow: hidden; margin-top: 12px }
+.stack div { display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #fff; min-width: 0; overflow: hidden; white-space: nowrap }
+.tablewrap { overflow-x: auto; margin-top: 12px }
+table { border-collapse: collapse; width: 100%; font-size: 13.5px; font-variant-numeric: tabular-nums }
+th { text-align: left; font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); padding: 8px; border-bottom: 2px solid var(--line); white-space: nowrap }
+td { padding: 7px 8px; border-bottom: 1px solid var(--line); color: var(--body) }
+td.r, th.r { text-align: right }
+tr.grp td { background: var(--surface-2); font-weight: 700; color: var(--fg) }
+tr.tot td { font-weight: 800; color: var(--fg); border-top: 2px solid var(--line) }
+.tag { font-size: 11px; font-weight: 700; padding: 1px 7px; border-radius: 999px; background: var(--surface-2); color: var(--muted); margin-left: 6px }
+.how { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin-top: 12px }
+.how div { background: var(--surface-2); border-radius: 10px; padding: 12px 14px }
+.how b { color: var(--fg); display: block; margin-bottom: 4px }
+.how p { margin: 0; font-size: 13.5px }
+.foot { font-size: 12.5px; color: var(--muted); margin-top: 10px }
+.sum100 { font-size: 12.5px; font-weight: 700 }
+.hbars { display: grid; gap: 8px; margin-top: 14px }
+.hb { display: grid; grid-template-columns: 170px minmax(0, 1fr) 210px; gap: 12px; align-items: center; font-size: 13.5px }
+.hb .nm { color: var(--fg); font-weight: 700 }
+.hb .tr { height: 18px; background: var(--surface-2); border-radius: 4px; position: relative }
+.hb .tr div { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 4px }
+.hb .v { font-variant-numeric: tabular-nums; color: var(--body) }
+@media (max-width: 620px) { .hb { grid-template-columns: minmax(0, 1fr) } }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px }
+.chip { border: 1px solid var(--line); background: var(--surface); color: var(--body); font: 700 12.5px var(--text); padding: 6px 11px; border-radius: 999px; cursor: pointer }
+.chip[aria-pressed="true"] { background: var(--teal-dk); border-color: var(--teal-dk); color: #fff }
+.regctl { display: grid; gap: 10px; max-width: 640px }
+.up { color: var(--teal-dk); font-weight: 700 } .down { color: var(--amber-dk); font-weight: 700 }
+.prog { font-size: 13px; color: var(--muted) }
+td.heat { text-align: right; font-variant-numeric: tabular-nums }
+#byMatrix { table-layout: fixed }
+#byMatrix th:first-child, #byMatrix td:first-child { width: 150px }
+#byMatrix th { white-space: normal; font-size: 11px; letter-spacing: .02em }
+#byMatrix th:not(:first-child) { text-align: right }
+</style>
+
+<header class="mast">
+  <div class="eyebrow">FNB · Festive Spend campaign · Media model</div>
+  <h1 id="headline">Working out the plan</h1>
+  <p id="subline">Change the channel weights, audiences or channel split on the left. The lowest budget that meets every target, the recommended budget and the media plan recalculate as you go.</p>
+  <div class="kpis">
+    <div class="kpi"><div class="lab">Lowest budget that meets every target</div><div class="val num" id="kMin">...</div><div class="sub" id="kMinSub">&nbsp;</div></div>
+    <div class="kpi rec"><div class="lab">Recommended budget</div><div class="val num" id="kOpt">...</div><div class="sub" id="kOptSub">&nbsp;</div></div>
+    <div class="kpi"><div class="lab">At your budget</div><div class="val num" id="kYou">...</div><div class="sub" id="kYouSub">&nbsp;</div></div>
+  </div>
+</header>
+
+<main class="wrap">
+  <aside class="panel" aria-label="Plan levers">
+    <div class="tabs" role="tablist">
+      <button class="tab" role="tab" aria-selected="true" data-tab="budget" id="t-budget">Budget</button>
+      <button class="tab" role="tab" aria-selected="false" data-tab="weights" id="t-weights">Channel weights</button>
+      <button class="tab" role="tab" aria-selected="false" data-tab="aud" id="t-aud">Audiences</button>
+      <button class="tab" role="tab" aria-selected="false" data-tab="split" id="t-split">Channel split</button>
+      <button class="tab" role="tab" aria-selected="false" data-tab="rates" id="t-rates">Rates</button>
+    </div>
+
+    <section class="pane" data-pane="budget">
+      <div class="ctl">
+        <div class="ctl-top"><label for="budget">Media budget (TTL)</label><output id="budgetOut" class="num"></output></div>
+        <input type="range" id="budget" min="15" max="80" step="0.5" value="32">
+        <div class="row"><button class="btn ghost" id="toMin">Use lowest budget</button><button class="btn ghost" id="toOpt">Use recommended</button><button class="btn ghost" id="to32">Back to R32m</button></div>
+      </div>
+      <div class="ctl">
+        <div class="ctl-top"><label for="search">Search, costed but not counted as reach</label><output id="searchOut" class="num"></output></div>
+        <input type="range" id="search" min="0" max="15" step="1" value="8">
+      </div>
+      <div class="ctl">
+        <div class="ctl-top"><label for="hol">Share of each channel's money in the holidays</label><output id="holOut" class="num"></output></div>
+        <label class="switch"><input type="checkbox" id="holAuto" checked> Let the model choose</label>
+        <input type="range" id="hol" min="25" max="45" step="1" value="30" disabled>
+        <p class="why">Before = 20 Oct to 12 Dec, 7.7 weeks. During = 13 Dec to 10 Jan, 4.1 weeks. 35% is an even spend per week.</p>
+      </div>
+      <button class="btn" id="resetAll">Reset every lever to the deck's plan</button>
+    </section>
+
+    <section class="pane" data-pane="weights" hidden>
+      <p class="hint">How much one exposure counts towards 3+ reach. 1.0 is full attention at the moment of purchase. Each channel is judged on attention, closeness to the moment of spend and how precisely it reaches the audience.</p>
+      <div class="row"><button class="btn on" id="presetSpend">Spend weights (retail plan)</button><button class="btn" id="presetBrand">Recall weights (brand plan)</button></div>
+      <div id="weightCtl" class="pane" style="padding:0"></div>
+    </section>
+
+    <section class="pane" data-pane="aud" hidden>
+      <p class="hint">Targets are the share of each audience that must see the campaign three or more times in an average four weeks. Switch an audience off to plan without it.</p>
+      <div class="ctl">
+        <div class="ctl-top"><label for="bshare">Business share of media</label><output id="bshareOut" class="num"></output></div>
+        <input type="range" id="bshare" min="5" max="40" step="1" value="15">
+        <p class="why">Business lines are aimed at Growth Entrepreneurs: targeted social and video, LinkedIn, talk radio and business hub DOOH.</p>
+      </div>
+      <div id="audCtl" style="display:grid;gap:12px"></div>
+    </section>
+
+    <section class="pane" data-pane="split" hidden>
+      <div class="seg" role="group" aria-label="How the split is set"><button id="modeOpt" aria-pressed="true">Let the model optimise</button><button id="modeMan" aria-pressed="false">Set my own split</button></div>
+      <p class="hint" id="splitHint"></p>
+      <div id="splitCtl" style="display:grid;gap:12px"></div>
+    </section>
+
+    <section class="pane" data-pane="rates" hidden>
+      <p class="hint">Cost per thousand impressions (CPM) for each channel's main buy. Other lines in the same channel move by the same percentage.</p>
+      <div id="rateCtl" style="display:grid;gap:10px"></div>
+    </section>
+  </aside>
+
+  <div class="out">
+    <section class="card">
+      <div class="row" style="justify-content:space-between"><h2 id="curveTitle">More budget reaches more people three times, with returns that tail off past the recommended level</h2><span class="busy" id="busy" hidden><span class="dot"></span>Recalculating</span></div>
+      <p class="lead" id="curveLead"></p>
+      <svg class="chart" id="curve" viewBox="0 0 760 320" role="img" aria-label="People reached three or more times by total budget"></svg>
+      <div class="legend"><span><i class="sw" style="background:var(--teal-dk)"></i>People reached 3+ times, best plan at each budget</span><span><i class="sw" style="background:var(--chart-fill);border:1px solid var(--teal)"></i>Best value zone</span><span><i class="sw" style="background:var(--amber)"></i>Recommended</span></div>
+    </section>
+
+    <section class="card">
+      <div class="row" style="justify-content:space-between;align-items:center">
+        <h2 id="audTitle">Audience targets</h2>
+        <div class="seg" role="group" aria-label="Which budget to show"><button data-view="you" aria-pressed="true">Your budget</button><button data-view="opt" aria-pressed="false">Recommended</button><button data-view="min" aria-pressed="false">Lowest</button></div>
+      </div>
+      <div class="legend"><span><i class="sw" style="background:var(--teal-dk)"></i>3+ reach</span><span><i class="sw" style="background:var(--amber)"></i>Target</span><span id="r1note"></span></div>
+      <div class="aud-rows" id="audRows"></div>
+    </section>
+
+    <section class="card">
+      <h2 id="planTitle">Media plan</h2>
+      <p class="lead" id="planLead"></p>
+      <div class="stack" id="stack" aria-label="Channel split"></div>
+      <div class="legend" id="stackLegend"></div>
+      <div class="tablewrap"><table id="planTable"></table></div>
+      <p class="foot">Amounts in R millions, rounded. Before = 20 Oct to 12 Dec. During = 13 Dec to 10 Jan. Search is costed at the share set under Budget and isn't counted as reach.</p>
+    </section>
+
+    <section class="card">
+      <div class="row" style="justify-content:space-between;align-items:center"><h2 id="byTitle">Media plan by audience</h2>
+        <div class="seg" role="group" aria-label="Show amounts as"><button data-by="r" aria-pressed="true">Rands</button><button data-by="pc" aria-pressed="false">% of each audience</button></div></div>
+      <p class="lead" id="byLead"></p>
+      <div class="tablewrap"><table id="byTable"></table></div>
+      <h3 style="font-size:16px;margin-top:22px">Which channels carry each audience</h3>
+      <div class="tablewrap"><table id="byMatrix"></table></div>
+      <p class="foot">How money is assigned: every channel line's money is split across the five audiences in proportion to where its impressions land. A Meta buy aimed at Wealth & Business Leaders still lands most of its impressions on Strivers, so most of its money counts towards Strivers. People reached 3+ is the average across the before and during windows. Cost per person = money assigned to the audience ÷ people in it reached 3+ times.</p>
+    </section>
+
+    <section class="card">
+      <h2 id="regTitle">Regional view</h2>
+      <p class="lead" id="regLead"></p>
+      <div class="regctl">
+        <div class="chips" id="provChips" role="group" aria-label="Provinces to tilt towards"></div>
+        <div class="ctl"><div class="ctl-top"><label for="tilt">Extra weight in the chosen provinces</label><output id="tiltOut" class="num">0%</output></div><input type="range" id="tilt" min="0" max="100" step="5" value="0"></div>
+      </div>
+      <div class="tablewrap"><table id="regTable"></table></div>
+      <p class="foot">Media lands by province in line with where each audience lives. TV is bought nationally and isn't tilted; every other channel can be weighted by province. Tilting moves weight, not money, so other provinces get a little less. Personal market share 2024 to 2025 from the IQBusiness Market Share Tracker (FNB regional view).</p>
+    </section>
+
+    <section class="card">
+      <h2>The model holds every plan to the same test, then stops spending where the return halves</h2>
+      <div class="how">
+        <div><b>Sufficient</b><p>Enough of each audience sees the campaign three or more times in four weeks, one pay cycle. Each exposure counts by its channel weight.</p></div>
+        <div><b>Lowest budget</b><p>The least money that meets every switched-on audience's target, before and during the holidays.</p></div>
+        <div><b>Recommended</b><p>The last R1m step where the next R1m still buys at least half of what the average R1m buys. Past it, money mostly adds frequency for people already reached.</p></div>
+        <div><b>Rules</b><p>Every channel keeps at least a quarter of its money in the holidays. Channel ranges keep the mix buyable. Reach per channel rises to a ceiling set by how many in each audience use it.</p></div>
+      </div>
+      <p class="foot">Built from the NoMenu Task 01 plan for FNB (rerun 7 October 2026): audience sizes from SARS, Stats SA and FinScope; TV and radio at rate card less the brief's deal discounts; digital from recent business banking actuals. This page uses a fast allocation method, so its numbers can differ from the deck's by a few hundred thousand rand.</p>
+    </section>
+  </div>
+</main>
+
+<script>
+const DATA = {"K": ["S", "F", "A", "W", "E"], "names": ["Mass-Market Strivers", "Established Family Providers", "Aspirant Professionals", "Wealth & Business Leaders", "Growth Entrepreneurs"], "TA": [29965301.085249, 4561477.643706353, 2183030.096230675, 485036.868813965, 1881000.0], "ceil": [0.92, 0.92, 0.92, 0.92, 0.95], "wk": [7.7, 4.1], "win": 4.0, "search": 0.08, "bfloor": 0.15, "TH": {"mass": {"Pre-holiday": [0.8, 0.55], "Holiday": [0.65, 0.3]}, "spec": {"Pre-holiday": [0.6, 0.25], "Holiday": [0.5, 0.15]}}, "tier": ["mass", "mass", "spec", "spec", "spec"], "lines": [{"name": "SABC TV", "key": "SABC TV", "focus": "Retail", "group": "TV", "cpm": 44.246, "comp": [0.733442, 0.094901, 0.024045, 0.003562, 0.027624], "rel": [1.0, 1.0, 1.0, 1.0, 0.5], "rm": [0.717653, 0.638594, 0.378675, 0.262652, 0.484552], "eff": 0.85, "gmin": 0.05, "gmax": 0.18, "w": 0.75, "b32": [3.2472, 1.0824], "b43": [3.9496, 2.1031]}, {"name": "e.tv", "key": "e.tv", "focus": "Retail", "group": "TV", "cpm": 44.246, "comp": [0.731035, 0.09459, 0.026629, 0.004142, 0.027533], "rel": [1.0, 1.0, 1.0, 1.0, 0.5], "rm": [0.623123, 0.549074, 0.349747, 0.252882, 0.410503], "eff": 0.85, "gmin": 0.02, "gmax": 0.1, "w": 0.75, "b32": [1.7331, 0.5777], "b43": [2.1944, 1.1682]}, {"name": "DStv", "key": "DStv", "focus": "Retail", "group": "TV", "cpm": 54.902, "comp": [0.550049, 0.159851, 0.098359, 0.022663, 0.075334], "rel": [1.0, 1.0, 1.0, 1.0, 0.5], "rm": [0.489318, 0.7906, 0.9, 0.9, 0.854755], "eff": 0.85, "gmin": 0.01, "gmax": 0.06, "w": 0.75, "b32": [0.1877, 0.0626], "b43": [0.2195, 0.1168]}, {"name": "Radio: SABC African language", "key": "Radio: SABC African language, regional and community", "focus": "Retail", "group": "Radio", "cpm": 36.128, "comp": [0.741575, 0.088346, 0.02114, 0.003131, 0.028335], "rel": [1.0, 1.0, 1.0, 1.0, 0.5], "rm": [0.743604, 0.767758, 0.743604, 0.718224, 0.743604], "eff": 0.85, "gmin": 0.08, "gmax": 0.25, "w": 0.75, "b32": [4.692, 1.564], "b43": [5.4855, 2.921]}, {"name": "Radio: Metro and commercial", "key": "Radio: Metro and commercial", "focus": "Retail", "group": "Radio", "cpm": 135.218, "comp": [0.505328, 0.166668, 0.122714, 0.027265, 0.089875], "rel": [1.0, 1.0, 1.0, 1.0, 0.5], "rm": [0.516637, 0.537491, 0.516637, 0.495313, 0.516637], "eff": 0.85, "gmin": 0.02, "gmax": 0.12, "w": 0.75, "b32": [0.3754, 0.1251], "b43": [0.4389, 0.2337]}, {"name": "Meta (Facebook and Instagram)", "key": "Meta (Facebook and Instagram)", "focus": "Retail", "group": "Social", "cpm": 30.0, "comp": [0.63928, 0.11722, 0.068801, 0.012935, 0.057002], "rel": [1.0, 1.0, 1.0, 1.0, 0.5], "rm": [0.539012, 0.630396, 0.661009, 0.569404, 0.661009], "eff": 0.9, "gmin": 0.05, "gmax": 0.22, "w": 0.5, "b32": [3.8407, 1.2802], "b43": [1.6482, 0.8776]}, {"name": "TikTok", "key": "TikTok", "focus": "Retail", "group": "Social", "cpm": 35.0, "comp": [0.696142, 0.100672, 0.04818, 0.006198, 0.037144], "rel": [1.0, 1.0, 1.0, 1.0, 0.5], "rm": [0.664715, 0.63085, 0.63085, 0.362855, 0.563404], "eff": 0.9, "gmin": 0.02, "gmax": 0.12, "w": 0.5, "b32": [0.3754, 0.1251], "b43": [0.4388, 0.2337]}, {"name": "YouTube, online video and CTV", "key": "YouTube, online video and connected TV", "focus": "Retail", "group": "Online video", "cpm": 70.0, "comp": [0.640422, 0.120427, 0.065867, 0.014025, 0.05439], "rel": [1.0, 1.0, 1.0, 1.0, 0.5], "rm": [0.50658, 0.627776, 0.719483, 0.688822, 0.688822], "eff": 0.9, "gmin": 0.02, "gmax": 0.12, "w": 0.5, "b32": [0.3754, 0.1251], "b43": [0.4387, 0.2338]}, {"name": "Display, in-market", "key": "Display, in-market", "focus": "Retail", "group": "Display", "cpm": 45.0, "comp": [0.512097, 0.155908, 0.124357, 0.02763, 0.091079], "rel": [1.0, 1.0, 1.0, 1.0, 0.5], "rm": [0.602549, 0.689452, 0.736553, 0.736553, 0.723071], "eff": 0.9, "gmin": 0.01, "gmax": 0.08, "w": 0.3, "b32": [0.1877, 0.0626], "b43": [0.2193, 0.1169]}, {"name": "Transit, mall and community DOOH", "key": "Out of home: transit, mall and DOOH", "focus": "Retail", "group": "DOOH", "cpm": 30.0, "comp": [0.642252, 0.119493, 0.064985, 0.014439, 0.053754], "rel": [1.0, 1.0, 1.0, 1.0, 0.5], "rm": [0.543377, 0.666998, 0.760906, 0.760906, 0.729464], "eff": 0.9, "gmin": 0.04, "gmax": 0.18, "w": 0.6, "b32": [3.3782, 1.1261], "b43": [3.9496, 2.103]}, {"name": "Cinema", "key": "Cinema", "focus": "Retail", "group": "Cinema", "cpm": 250.0, "comp": [0.35979, 0.182564, 0.209691, 0.042708, 0.13551], "rel": [1.0, 1.0, 1.0, 1.0, 0.5], "rm": [0.02503, 0.086781, 0.229077, 0.206788, 0.164397], "eff": 0.95, "gmin": 0.01, "gmax": 0.05, "w": 0.6, "b32": [0.1877, 0.0626], "b43": [0.2194, 0.1169]}, {"name": "Influencers", "key": "Influencers", "focus": "Retail", "group": "Influencers", "cpm": 130.0, "comp": [0.696116, 0.105966, 0.045642, 0.005634, 0.034958], "rel": [1.0, 1.0, 1.0, 1.0, 0.5], "rm": [0.26337, 0.250138, 0.250138, 0.14454, 0.223697], "eff": 0.9, "gmin": 0.01, "gmax": 0.05, "w": 0.5, "b32": [0.1877, 0.0626], "b43": [0.2194, 0.1169]}, {"name": "LinkedIn", "key": "LinkedIn", "focus": "Business", "group": "LinkedIn", "cpm": 300.0, "comp": [0.225778, 0.108017, 0.10339, 0.024016, 0.475], "rel": [0.5, 0.5, 0.5, 0.5, 1.0], "rm": [0.106279, 0.335442, 0.676575, 0.708033, 0.613939], "eff": 0.9, "gmin": 0.05, "gmax": 0.3, "w": 0.3, "b32": [0.1656, 0.0552], "b43": [0.194, 0.1027]}, {"name": "Meta, business targeting", "key": "Meta, business targeting", "focus": "Business", "group": "Social", "cpm": 30.0, "comp": [0.476061, 0.087292, 0.051235, 0.009632, 0.285], "rel": [0.5, 0.5, 0.5, 0.5, 1.0], "rm": [0.539012, 0.630396, 0.661009, 0.569404, 0.661009], "eff": 0.9, "gmin": 0.1, "gmax": 0.4, "w": 0.5, "b32": [1.3248, 0.4416], "b43": [1.5489, 0.8247]}, {"name": "YouTube, business targeting", "key": "YouTube, business targeting", "focus": "Business", "group": "Online video", "cpm": 70.0, "comp": [0.509486, 0.095805, 0.052401, 0.011158, 0.2375], "rel": [0.5, 0.5, 0.5, 0.5, 1.0], "rm": [0.50658, 0.627776, 0.719483, 0.688822, 0.688822], "eff": 0.9, "gmin": 0.03, "gmax": 0.25, "w": 0.5, "b32": [0.828, 0.276], "b43": [0.9681, 0.5154]}, {"name": "Radio: talk and business", "key": "Radio: talk and business", "focus": "Business", "group": "Radio", "cpm": 135.218, "comp": [0.484207, 0.159702, 0.117585, 0.026126, 0.125826], "rel": [0.5, 0.5, 0.5, 0.5, 1.0], "rm": [0.462442, 0.481746, 0.462442, 0.442776, 0.462442], "eff": 0.85, "gmin": 0.05, "gmax": 0.3, "w": 0.6, "b32": [0.828, 0.276], "b43": [0.9672, 0.5163]}, {"name": "Business publishers and display", "key": "Business publishers and display", "focus": "Business", "group": "Display", "cpm": 130.0, "comp": [0.424799, 0.12933, 0.103158, 0.02292, 0.2375], "rel": [0.5, 0.5, 0.5, 0.5, 1.0], "rm": [0.450191, 0.514591, 0.549377, 0.549377, 0.539429], "eff": 0.9, "gmin": 0.03, "gmax": 0.2, "w": 0.25, "b32": [0.0994, 0.0331], "b43": [0.1163, 0.0617]}, {"name": "Business hub and airport DOOH", "key": "Out of home: business districts and airports", "focus": "Business", "group": "DOOH", "cpm": 150.0, "comp": [0.622992, 0.11591, 0.063036, 0.014006, 0.080632], "rel": [0.5, 0.5, 0.5, 0.5, 1.0], "rm": [0.323998, 0.396757, 0.451553, 0.451553, 0.433264], "eff": 0.9, "gmin": 0.02, "gmax": 0.15, "w": 0.35, "b32": [0.0662, 0.0221], "b43": [0.0782, 0.0405]}, {"name": "Meta, Aspirant targeting", "key": "Meta, Aspirant targeting", "focus": "Retail", "group": "Social", "cpm": 30.0, "comp": [0.515269, 0.094481, 0.2475, 0.010426, 0.045944], "rel": [1.0, 1.0, 1.0, 1.0, 0.5], "rm": [0.539012, 0.630396, 0.661009, 0.569404, 0.661009], "eff": 0.9, "gmin": 0, "gmax": 0.1, "w": 0.5, "b32": [0.0, 0.0], "b43": [1.3745, 0.7318]}, {"name": "Meta, Wealth targeting", "key": "Meta, Wealth targeting", "focus": "Retail", "group": "Social", "cpm": 30.0, "comp": [0.582892, 0.10688, 0.062732, 0.1, 0.051974], "rel": [1.0, 1.0, 1.0, 1.0, 0.5], "rm": [0.539012, 0.630396, 0.661009, 0.569404, 0.661009], "eff": 0.9, "gmin": 0, "gmax": 0.1, "w": 0.5, "b32": [0.0, 0.0], "b43": [1.1465, 0.6104]}, {"name": "YouTube, Aspirant targeting", "key": "YouTube and CTV, Aspirant targeting", "focus": "Retail", "group": "Online video", "cpm": 70.0, "comp": [0.514551, 0.096758, 0.2475, 0.011268, 0.0437], "rel": [1.0, 1.0, 1.0, 1.0, 0.5], "rm": [0.50658, 0.627776, 0.719483, 0.688822, 0.688822], "eff": 0.9, "gmin": 0, "gmax": 0.1, "w": 0.5, "b32": [0.0, 0.0], "b43": [0.0, 0.0]}, {"name": "YouTube, Wealth targeting", "key": "YouTube and CTV, Wealth targeting", "focus": "Retail", "group": "Online video", "cpm": 70.0, "comp": [0.584579, 0.109926, 0.060124, 0.1, 0.049647], "rel": [1.0, 1.0, 1.0, 1.0, 0.5], "rm": [0.50658, 0.627776, 0.719483, 0.688822, 0.688822], "eff": 0.9, "gmin": 0, "gmax": 0.1, "w": 0.5, "b32": [0.0, 0.0], "b43": [0.0, 0.0]}], "check": {"eff32": 18.99553482745782, "eff43": 23.291645902770753, "suff": 32.11713121633549, "opt": 43.0, "r3_32": {"Pre-holiday": [0.5488, 0.5488, 0.5082, 0.4488, 0.5604], "Holiday": [0.3782, 0.3768, 0.3275, 0.2633, 0.3817]}}, "brandW": {"SABC TV": 1.0, "e.tv": 1.0, "DStv": 1.0, "Radio: SABC African language, regional and community": 0.5, "Radio: Metro and commercial": 0.5, "Meta (Facebook and Instagram)": 0.35, "TikTok": 0.35, "YouTube, online video and connected TV": 0.6, "Display, in-market": 0.15, "Out of home: transit, mall and DOOH": 0.3, "Cinema": 1.5, "Influencers": 0.6, "LinkedIn": 0.35, "Meta, business targeting": 0.35, "YouTube, business targeting": 0.6, "Radio: talk and business": 0.5, "Business publishers and display": 0.15, "Out of home: business districts and airports": 0.3, "Meta, Aspirant targeting": 0.35, "Meta, Wealth targeting": 0.35, "YouTube and CTV, Aspirant targeting": 0.6, "YouTube and CTV, Wealth targeting": 0.6}, "prov": [{"name": "Gauteng", "share": [0.2506522226025369, 0.3495463107430713, 0.349546310743072, 0.3495463107430719, 0.4142857142857143], "fnb": [22, 19], "job": "Buzz and recommendation"}, {"name": "KwaZulu-Natal", "share": [0.1968355861637158, 0.15763638393473636, 0.15763638393473625, 0.15763638393473628, 0.10428571428571419], "fnb": [20, 13], "job": "Awareness and presence"}, {"name": "Western Cape", "share": [0.11301319421480491, 0.1827783113467892, 0.1827783113467892, 0.1827783113467891, 0.22142857142857134], "fnb": [21, 18], "job": "Regain awareness"}, {"name": "Eastern Cape", "share": [0.11043212420254712, 0.07917658437256112, 0.07917658437256105, 0.07917658437256112, 0.06639781555509447], "fnb": [19, 20], "job": "Satisfaction to consideration"}, {"name": "Limpopo", "share": [0.1019368784524224, 0.05388476491260558, 0.05388476491260541, 0.05388476491260548, 0.04518798973521679], "fnb": [16, 14], "job": "Win on value"}, {"name": "Mpumalanga", "share": [0.08556843174130775, 0.062159039352756906, 0.0621590393527567, 0.062159039352756754, 0.05212683096565255], "fnb": [15, 14], "job": "Customer experience"}, {"name": "North West", "share": [0.07157928686257871, 0.04768136062561521, 0.04768136062561519, 0.0476813606256152, 0.039985788896100875], "fnb": null, "job": null}, {"name": "Free State", "share": [0.048715191889204514, 0.045363998445583094, 0.04536399844558307, 0.04536399844558304, 0.03804243925777724], "fnb": null, "job": null}, {"name": "Northern Cape", "share": [0.021267083870882057, 0.021773246266281233, 0.021773246266281143, 0.021773246266281198, 0.01825913559015814], "fnb": null, "job": null}]};
+// Festive Spend reach engine, ported from the Python plan model.
+// Budgets in R millions. Two windows: before 12 December (7.7 weeks) and the holidays (4.1 weeks).
+function Engine(DATA) {
+  const K = DATA.K.length, L = DATA.lines.length;
+  const lines = DATA.lines;
+  const PH = [0, 1];
+
+  function build(cfg) {
+    // cfg: { w: [L] line weights, cpm: [L], th: {mass:[[t1,t3],[t1,t3]], spec:...}, on: [K] bool, bshare, search }
+    const coef = new Float64Array(L * K), rm = new Float64Array(L * K), eff = new Float64Array(L), w = new Float64Array(L);
+    for (let i = 0; i < L; i++) {
+      const l = lines[i];
+      eff[i] = l.eff; w[i] = cfg.w[i];
+      for (let k = 0; k < K; k++) {
+        coef[i * K + k] = 1e9 / cfg.cpm[i] * l.comp[k] * l.rel[k] / DATA.TA[k] * 100;
+        rm[i * K + k] = Math.max(l.rm[k], 1e-9);
+      }
+    }
+    const tgt = [];
+    for (let k = 0; k < K; k++) {
+      const t = cfg.th[DATA.tier[k]];
+      tgt.push([t[0], t[1]]);
+    }
+    return { coef, rm, eff, w, tgt, on: cfg.on, bshare: cfg.bshare, search: cfg.search };
+  }
+
+  // reach for a split: bp, bh are Float64Array(L) in R millions
+  function rf(M, bp, bh) {
+    const out = [];
+    for (const ph of PH) {
+      const b = ph === 0 ? bp : bh, scale = DATA.win / DATA.wk[ph];
+      const R1 = new Float64Array(K), R3 = new Float64Array(K), F = new Float64Array(K), FE = new Float64Array(K);
+      for (let k = 0; k < K; k++) {
+        const C = DATA.ceil[k];
+        let prod = 1, grp = 0, ge = 0;
+        for (let i = 0; i < L; i++) {
+          const g = b[i] * scale * M.coef[i * K + k];
+          if (g <= 0) continue;
+          const R = M.rm[i * K + k];
+          const r = R * (1 - Math.exp(-M.eff[i] * g / (100 * R)));
+          prod *= (1 - r / C); grp += g; ge += g * M.w[i];
+        }
+        const r1 = C * (1 - prod);
+        const f = r1 > 0 ? grp / (100 * r1) : 0, fe = r1 > 0 ? ge / (100 * r1) : 0;
+        const r3 = fe > 1 ? r1 * Math.pow(1 - 1 / fe, 2) : 0;
+        R1[k] = r1; R3[k] = r3; F[k] = f; FE[k] = fe;
+      }
+      out.push({ R1, R3, F, FE });
+    }
+    return out;
+  }
+
+  function people(M, o) {
+    const tot = DATA.wk[0] + DATA.wk[1];
+    let e = 0;
+    for (const ph of PH) for (let k = 0; k < K; k++) if (M.on[k]) e += DATA.wk[ph] / tot * o[ph].R3[k] * DATA.TA[k];
+    return e / 1e6;
+  }
+
+  function score(M, o) {
+    // targets first (both 1+ and 3+ floors), then people reached 3+ times
+    let s = 0, mn = 9;
+    for (const ph of PH) for (let k = 0; k < K; k++) {
+      if (!M.on[k]) continue;
+      const t = M.tgt[k][ph];
+      const a = o[ph].R1[k] / t[0], c = o[ph].R3[k] / t[1];
+      s += Math.min(a, 1) + Math.min(c, 1);
+      mn = Math.min(mn, a, c);
+    }
+    return { s, mn };
+  }
+
+  function split(b, h) {
+    const bp = new Float64Array(L), bh = new Float64Array(L);
+    for (let i = 0; i < L; i++) { bp[i] = b[i] * (1 - h); bh[i] = b[i] * h; }
+    return [bp, bh];
+  }
+
+  function evalPlan(M, b, h) {
+    const [bp, bh] = split(b, h);
+    const o = rf(M, bp, bh), sc = score(M, o);
+    return { o, ppl: people(M, o), s: sc.s, mn: sc.mn, J: 1000 * sc.s + people(M, o) };
+  }
+
+  // Fast scoring: keep running sums per window and audience, so moving money on one line costs O(audiences)
+  function contrib(M, i, x, ph, k) {
+    const g = x * DATA.win / DATA.wk[ph] * M.coef[i * K + k];
+    if (g <= 0) return [0, 0, 0];
+    const R = M.rm[i * K + k], r = R * (1 - Math.exp(-M.eff[i] * g / (100 * R)));
+    return [Math.log(Math.max(1 - r / DATA.ceil[k], 1e-12)), g, g * M.w[i]];
+  }
+  function newState() { return { lp: new Float64Array(2 * K), g: new Float64Array(2 * K), ge: new Float64Array(2 * K) }; }
+  function addLine(M, S, i, x, h, sign) {
+    for (const ph of PH) {
+      const amt = x * (ph === 0 ? 1 - h : h);
+      for (let k = 0; k < K; k++) {
+        const c = contrib(M, i, amt, ph, k), j = ph * K + k;
+        S.lp[j] += sign * c[0]; S.g[j] += sign * c[1]; S.ge[j] += sign * c[2];
+      }
+    }
+  }
+  function scoreState(M, S) {
+    const tot = DATA.wk[0] + DATA.wk[1];
+    let s = 0, mn = 9, ppl = 0;
+    for (const ph of PH) for (let k = 0; k < K; k++) {
+      const j = ph * K + k, C = DATA.ceil[k];
+      const r1 = C * (1 - Math.exp(S.lp[j]));
+      const fe = r1 > 0 ? S.ge[j] / (100 * r1) : 0;
+      const r3 = fe > 1 ? r1 * Math.pow(1 - 1 / fe, 2) : 0;
+      if (!M.on[k]) continue;
+      ppl += DATA.wk[ph] / tot * r3 * DATA.TA[k];
+      const t = M.tgt[k][ph], a = r1 / t[0], c = r3 / t[1];
+      s += Math.min(a, 1) + Math.min(c, 1); mn = Math.min(mn, a, c);
+    }
+    return 1000 * s + ppl / 1e6;
+  }
+
+  // Allocation within channel ranges: each line starts at its floor, the rest goes in small steps to whichever
+  // line adds most, then a clean-up pass moves money between lines while that still helps.
+  function allocate(M, W, h, ranges, fast) {
+    const T = { Retail: W * (1 - M.bshare), Business: W * M.bshare };
+    const b = new Float64Array(L), lo = new Float64Array(L), hi = new Float64Array(L);
+    const rem = { Retail: T.Retail, Business: T.Business };
+    for (let i = 0; i < L; i++) {
+      const f = lines[i].focus, r = ranges[i];
+      lo[i] = r[0] * T[f]; hi[i] = Math.max(r[1] * T[f], lo[i]); b[i] = lo[i]; rem[f] -= b[i];
+    }
+    const S = newState();
+    for (let i = 0; i < L; i++) addLine(M, S, i, b[i], h, 1);
+    const tryMove = (i, from, to) => { addLine(M, S, i, from, h, -1); addLine(M, S, i, to, h, 1); };
+    const step = W / (fast ? 100 : 200);
+    for (let guard = 0; guard < 800 && (rem.Retail > 1e-9 || rem.Business > 1e-9); guard++) {
+      for (const f of ['Retail', 'Business']) {
+        if (rem[f] <= 1e-9) continue;
+        const amt = Math.min(step, rem[f]);
+        let best = -1, bestJ = -Infinity;
+        for (let i = 0; i < L; i++) {
+          if (lines[i].focus !== f || b[i] + amt > hi[i] + 1e-9) continue;
+          tryMove(i, b[i], b[i] + amt); const J = scoreState(M, S); tryMove(i, b[i] + amt, b[i]);
+          if (J > bestJ) { bestJ = J; best = i; }
+        }
+        if (best < 0) {
+          let s = 0; for (let i = 0; i < L; i++) if (lines[i].focus === f) s += b[i];
+          for (let i = 0; i < L; i++) if (lines[i].focus === f && s > 0) { const nb = b[i] + rem[f] * b[i] / s; tryMove(i, b[i], nb); b[i] = nb; }
+          rem[f] = 0; continue;
+        }
+        tryMove(best, b[best], b[best] + amt); b[best] += amt; rem[f] -= amt;
+      }
+    }
+    for (const d of (fast ? [W / 60, W / 240] : [W / 60, W / 240, W / 960])) {
+      for (let it = 0; it < (fast ? 25 : 60); it++) {
+        let cur = scoreState(M, S), best = null, bestJ = cur;
+        for (let i = 0; i < L; i++) {
+          if (b[i] - d < lo[i] - 1e-9) continue;
+          for (let j = 0; j < L; j++) {
+            if (j === i || lines[j].focus !== lines[i].focus || b[j] + d > hi[j] + 1e-9) continue;
+            tryMove(i, b[i], b[i] - d); tryMove(j, b[j], b[j] + d);
+            const J = scoreState(M, S);
+            tryMove(j, b[j] + d, b[j]); tryMove(i, b[i] - d, b[i]);
+            if (J > bestJ + 1e-9) { bestJ = J; best = [i, j]; }
+          }
+        }
+        if (!best) break;
+        const [i, j] = best; tryMove(i, b[i], b[i] - d); tryMove(j, b[j], b[j] + d); b[i] -= d; b[j] += d;
+      }
+    }
+    return b;
+  }
+
+  const HS = [0.25, 0.30, 0.35, 0.40];
+  function bestPlan(M, total, ranges, fast) {
+    const W = total * (1 - M.search);
+    let best = null;
+    for (const h of (fast ? [0.25, 0.35] : HS)) {
+      const b = allocate(M, W, h, ranges, fast), e = evalPlan(M, b, h);
+      if (!best || e.J > best.e.J) best = { b, h, e };
+    }
+    return { total, W, ...best };
+  }
+
+  function fixedPlan(M, total, shares, h) {
+    const W = total * (1 - M.search), b = new Float64Array(L);
+    for (let i = 0; i < L; i++) b[i] = shares[i] * W;
+    return { total, W, b, h, e: evalPlan(M, b, h) };
+  }
+
+  function bestFixed(M, total, shares, fast) {
+    let best = null;
+    for (const h of (fast ? [0.25, 0.35] : HS)) { const p = fixedPlan(M, total, shares, h); if (!best || p.e.J > best.e.J) best = p; }
+    return best;
+  }
+
+  // Lowest budget where every audience switched on meets its targets
+  function minimum(M, planAt, iters) {
+    let lo = 5, hi = 200, pl = planAt(hi);
+    if (pl.e.mn < 0.999) return null;
+    for (let it = 0; it < (iters || 14); it++) {
+      const mid = (lo + hi) / 2, p = planAt(mid);
+      if (p.e.mn >= 0.999) hi = mid; else lo = mid;
+    }
+    return hi;
+  }
+
+  // Recommended: last R1m step where the next R1m still buys at least half the average R1m
+  function curve(M, planAt, from, to) {
+    const pts = [];
+    let prev = 0;
+    for (let T = from; T <= to + 1e-9; T += 1) {
+      const p = planAt(T); const e = Math.max(p.e.ppl, prev); prev = e;
+      pts.push({ T, e, mn: p.e.mn });
+    }
+    return pts;
+  }
+
+  function recommended(pts, minB) {
+    const above = pts.filter(p => minB == null || p.T >= Math.ceil(minB));
+    for (let i = 1; i < above.length; i++) {
+      const m = above[i].e - above[i - 1].e, avg = above[i].e / above[i].T;
+      if (m < 0.5 * avg) return above[i - 1].T;
+    }
+    return above.length ? above[above.length - 1].T : null;
+  }
+
+  return { build, rf, people, evalPlan, allocate, bestPlan, fixedPlan, bestFixed, minimum, curve, recommended, L, K };
+}
+
+
+</script>
+<script>
+(function () {
+  const E = Engine(DATA), L = DATA.lines.length, K = DATA.K.length;
+  const GROUPS = [
+    { id: 'Radio', label: 'Radio', main: 'Radio: SABC African language', col: '#00A9AC', why: 'Heard on the way to the shops, close to spend moments, easy to time around paydays.' },
+    { id: 'Social', label: 'Social: Meta and TikTok', main: 'Meta (Facebook and Instagram)', col: '#FA9D1E', why: 'On the device people pay with and precisely targetable, but feed attention is short.' },
+    { id: 'TV', label: 'TV', main: 'SABC TV', col: '#007A7C', why: 'High attention and the widest reach, but viewing happens at home, away from spend.' },
+    { id: 'DOOH', label: 'Digital out of home', main: 'Transit, mall and community DOOH', col: '#7E8C8A', why: 'Seen where and when people spend, but exposure is brief.' },
+    { id: 'Online video', label: 'Online video and CTV', main: 'YouTube, online video and CTV', col: '#3A4443', why: 'Strong attention when watched, but often skipped and far from the moment of spend.' },
+    { id: 'Display', label: 'Display', main: 'Display, in-market', col: '#E0B04A', why: 'Low attention, but one click from the decision for people shopping online.' },
+    { id: 'Cinema', label: 'Cinema', main: 'Cinema', col: '#7FCFCF', why: 'Captive, high attention and affluent, but reach is small and costly.' },
+    { id: 'Influencers', label: 'Influencers', main: 'Influencers', col: '#C49A6C', why: 'Trusted voices lift attention, but reach is small and costly per person.' },
+    { id: 'LinkedIn', label: 'LinkedIn', main: 'LinkedIn', col: '#4A6FA5', why: 'Precise targeting of business owners, but they are at work, away from spend.' }
+  ];
+  const gIdx = id => GROUPS.findIndex(g => g.id === id);
+  const lineIdx = name => DATA.lines.findIndex(l => l.name === name);
+  const SPEND = DATA.lines.map(l => l.w), BRAND = DATA.lines.map(l => DATA.brandW[l.key]);
+  const baseCPM = DATA.lines.map(l => l.cpm);
+  const TIER_LAB = { mass: 'Mass', spec: 'Specialist' };
+  const R = v => 'R' + (Math.round(v * 10) / 10).toFixed(1) + 'm';
+  const Rk = v => 'R' + (Math.abs(v - Math.round(v)) < 0.05 ? Math.round(v) : v.toFixed(1)) + 'm';
+  const pc = v => Math.round(v * 100) + '%';
+  const pcf = (v, t) => (Math.abs(v - t) < 0.01 ? (v * 100).toFixed(1) : Math.round(v * 100)) + '%';
+
+  const DEFAULT = () => ({
+    budget: 32, search: 8, holAuto: true, hol: 30, preset: 'spend',
+    gw: GROUPS.map(g => SPEND[lineIdx(g.main)]), cpm: GROUPS.map(g => baseCPM[lineIdx(g.main)]),
+    bshare: 15, on: [1, 1, 1, 1, 1],
+    th: { mass: [DATA.TH.mass['Pre-holiday'].slice(), DATA.TH.mass['Holiday'].slice()], spec: [DATA.TH.spec['Pre-holiday'].slice(), DATA.TH.spec['Holiday'].slice()] },
+    perAud: DATA.K.map((k, i) => { const t = DATA.TH[DATA.tier[i]]; return [t['Pre-holiday'][1], t['Holiday'][1]]; }),
+    gOn: GROUPS.map(() => true), mode: 'opt', man: null, within: null
+  });
+  let S = DEFAULT(), view = 'you', RES = {}, runId = 0;
+
+  // ---------- model config from levers ----------
+  function cfg() {
+    const base = S.preset === 'brand' ? BRAND : SPEND;
+    const w = DATA.lines.map((l, i) => { const g = gIdx(l.group), m = base[lineIdx(GROUPS[g].main)]; return base[i] * (m > 0 ? S.gw[g] / m : 1); });
+    const cpm = DATA.lines.map((l, i) => { const g = gIdx(l.group), m = baseCPM[lineIdx(GROUPS[g].main)]; return baseCPM[i] * S.cpm[g] / m; });
+    const th = {};
+    // per-audience 3+ targets; 1+ floors follow the tier
+    const M = E.build({ w, cpm, th: { mass: [[DATA.TH.mass['Pre-holiday'][0], 1], [DATA.TH.mass['Holiday'][0], 1]], spec: [[DATA.TH.spec['Pre-holiday'][0], 1], [DATA.TH.spec['Holiday'][0], 1]] }, on: S.on, bshare: S.bshare / 100, search: S.search / 100 });
+    for (let k = 0; k < K; k++) { M.tgt[k][0][1] = S.perAud[k][0]; M.tgt[k][1][1] = S.perAud[k][1]; }
+    M.cpmArr = cpm;
+    return M;
+  }
+  function ranges() {
+    return DATA.lines.map(l => S.gOn[gIdx(l.group)] ? [l.gmin, l.gmax] : [0, 0]);
+  }
+  function manShares() {
+    const g = S.man, tot = g.reduce((a, b) => a + b, 0) || 1, out = new Float64Array(L);
+    for (let i = 0; i < L; i++) { const gi = gIdx(DATA.lines[i].group); out[i] = g[gi] / tot * S.within[i]; }
+    return out;
+  }
+  function planAt(M, T) {
+    if (S.mode === 'man') {
+      const sh = manShares();
+      return S.holAuto ? E.bestFixed(M, T, sh) : E.fixedPlan(M, T, sh, S.hol / 100);
+    }
+    if (S.holAuto) return E.bestPlan(M, T, ranges());
+    const W = T * (1 - M.search), h = S.hol / 100, b = E.allocate(M, W, h, ranges());
+    return { total: T, W, b, h, e: E.evalPlan(M, b, h) };
+  }
+
+  // ---------- recompute (staged so the page stays responsive) ----------
+  function recompute() {
+    const id = ++runId; document.getElementById('busy').hidden = false;
+    const M = cfg();
+    const you = planAt(M, S.budget);
+    RES = { M, you, min: null, opt: null, pts: [], minPlan: null, optPlan: null, partial: true };
+    renderAll();
+    setTimeout(() => {
+      if (id !== runId) return;
+      const mb = E.minimum(M, T => planAt(M, T));
+      RES.min = mb; RES.minPlan = mb ? planAt(M, Math.round(mb * 10) / 10) : null;
+      renderAll();
+      const start = 14, stops = [];
+      for (let T = start; T <= 75; T += (T < (mb || 30) - 4 || T > (mb || 30) + 30) ? 2 : 1) stops.push(T);
+      let j = 0, prev = 0;
+      const tick = () => {
+        if (id !== runId) return;
+        const t0 = performance.now();
+        while (j < stops.length && performance.now() - t0 < 40) {
+          const p = planAt(M, stops[j]); const e = Math.max(p.e.ppl, prev); prev = e;
+          RES.pts.push({ T: stops[j], e }); j++;
+        }
+        if (j < stops.length) { drawCurve(); setTimeout(tick, 0); return; }
+        const above = RES.pts.filter(p => mb != null && p.T >= Math.ceil(mb) && p.T <= Math.ceil(mb) + 30);
+        let opt = null;
+        for (let i = 1; i < above.length; i++) { const m = above[i].e - above[i - 1].e, avg = above[i].e / above[i].T; if (m < 0.5 * avg) { opt = above[i - 1].T; break; } }
+        if (opt == null && above.length) opt = above[above.length - 1].T;
+        RES.opt = opt; RES.optPlan = opt ? planAt(M, opt) : null; RES.partial = false;
+        document.getElementById('busy').hidden = true;
+        renderAll();
+      };
+      tick();
+    }, 30);
+  }
+  let deb = null;
+  const changed = () => { clearTimeout(deb); deb = setTimeout(recompute, 220); };
+
+  // ---------- rendering ----------
+  function plural(n, a, b) { return n === 1 ? a : b; }
+  function under(plan) {
+    const o = plan.e.o, out = [];
+    for (let k = 0; k < K; k++) { if (!S.on[k]) continue; const t = RES.M.tgt[k]; if (o[0].R3[k] < t[0][1] - 5e-4 || o[1].R3[k] < t[1][1] - 5e-4 || o[0].R1[k] < t[0][0] - 5e-4 || o[1].R1[k] < t[1][0] - 5e-4) out.push(k); }
+    return out;
+  }
+  function renderAll() {
+    const you = RES.you, u = under(you);
+    document.getElementById('budgetOut').textContent = Rk(S.budget);
+    document.getElementById('kYou').textContent = you.e.ppl.toFixed(1) + 'm people';
+    document.getElementById('kYouSub').innerHTML = (u.length ? `<span class="status warn">${u.length} ${plural(u.length, 'audience', 'audiences')} under target</span>` : `<span class="status ok">Every target met</span>`) + ` reached 3+ times at ${Rk(S.budget)}`;
+    document.getElementById('kMin').textContent = RES.min == null ? (RES.partial ? '...' : 'Not reachable') : R(RES.min);
+    document.getElementById('kMinSub').textContent = RES.min == null ? (RES.partial ? 'Working it out' : 'Targets too high for these channels') : (S.budget >= RES.min - 0.05 ? `Your budget clears it by ${R(S.budget - RES.min)}` : `Your budget is ${R(RES.min - S.budget)} short of it`);
+    document.getElementById('kOpt').textContent = RES.opt == null ? '...' : Rk(RES.opt);
+    document.getElementById('kOptSub').textContent = RES.optPlan ? `${RES.optPlan.e.ppl.toFixed(1)}m people reached 3+ times` + (Math.abs(S.budget - RES.opt) < 0.25 ? ', the same as your budget' : `, ${Rk(Math.abs(RES.opt - S.budget))} ${RES.opt > S.budget ? 'more' : 'less'} than your budget`) : 'Tracing the return curve';
+    let h = `At ${Rk(S.budget)}, ${you.e.ppl.toFixed(1)}m people see the campaign three times in four weeks`;
+    if (u.length) { const gp = Math.max(...u.map(k => Math.max(RES.M.tgt[k][0][1] - RES.you.e.o[0].R3[k], RES.M.tgt[k][1][1] - RES.you.e.o[1].R3[k]))) * 100; h += `, with ${u.map(k => DATA.names[k]).join(' and ')} ${gp > 0.05 ? gp.toFixed(1) + ' points' : 'just'} under target`; }
+    if (RES.opt != null) h += `. The recommended budget is ${Rk(RES.opt)}`;
+    document.getElementById('headline').textContent = h + '.';
+    document.querySelectorAll('[data-view]').forEach(bt => {
+      const ready = bt.dataset.view === 'you' || (bt.dataset.view === 'opt' ? !!RES.optPlan : !!RES.minPlan);
+      bt.disabled = !ready; bt.title = ready ? '' : 'Still calculating';
+      bt.style.opacity = ready ? '' : '.45';
+    });
+    if ((view === 'opt' && !RES.optPlan) || (view === 'min' && !RES.minPlan)) {
+      view = 'you'; document.querySelectorAll('[data-view]').forEach(x => x.setAttribute('aria-pressed', x.dataset.view === 'you'));
+    }
+    drawCurve(); drawAud(); drawPlan(); drawBy(); drawReg();
+  }
+
+  function drawCurve() {
+    const svg = document.getElementById('curve'), pts = RES.pts;
+    const X0 = 14, X1 = 75, W = 760, H = 320, l = 46, r = 16, t = 16, b = 38;
+    const ymax = Math.max(10, Math.ceil(Math.max(...pts.map(p => p.e), RES.you.e.ppl, 1) / 5) * 5);
+    const x = T => l + (T - X0) / (X1 - X0) * (W - l - r), y = v => H - b - v / ymax * (H - t - b);
+    let s = '';
+    for (let v = 0; v <= ymax; v += 5) s += `<line x1="${l}" x2="${W - r}" y1="${y(v)}" y2="${y(v)}" stroke="var(--line)" stroke-width="1"/><text x="${l - 8}" y="${y(v) + 4}" text-anchor="end" font-size="12" fill="var(--muted)">${v}m</text>`;
+    for (let T = 20; T <= 70; T += 10) s += `<text x="${x(T)}" y="${H - 14}" text-anchor="middle" font-size="12" fill="var(--muted)">R${T}m</text>`;
+    if (RES.min != null && RES.opt != null) {
+      const zone = pts.filter(p => p.T >= RES.min && p.T <= RES.opt);
+      if (zone.length > 1) s += `<path d="M${x(zone[0].T)},${y(0)} ${zone.map(p => `L${x(p.T)},${y(p.e)}`).join(' ')} L${x(zone[zone.length - 1].T)},${y(0)} Z" fill="var(--chart-fill)"/>`;
+    }
+    if (pts.length > 1) s += `<polyline points="${pts.map(p => `${x(p.T)},${y(p.e)}`).join(' ')}" fill="none" stroke="var(--teal-dk)" stroke-width="3" stroke-linejoin="round"/>`;
+    if (RES.min != null) s += `<line x1="${x(RES.min)}" x2="${x(RES.min)}" y1="${t}" y2="${H - b}" stroke="var(--muted)" stroke-dasharray="4 5"/><text x="${x(RES.min) + 6}" y="${t + 12}" font-size="12" fill="var(--muted)">Lowest ${R(RES.min)}</text>`;
+    if (RES.optPlan) s += `<circle cx="${x(RES.opt)}" cy="${y(RES.optPlan.e.ppl)}" r="7" fill="var(--amber)" stroke="var(--surface)" stroke-width="3"/><text x="${x(RES.opt) + 10}" y="${y(RES.optPlan.e.ppl) + 18}" font-size="12.5" font-weight="700" fill="var(--amber-dk)">Recommended ${Rk(RES.opt)}</text>`;
+    s += `<circle cx="${x(Math.min(Math.max(S.budget, X0), X1))}" cy="${y(RES.you.e.ppl)}" r="7" fill="var(--teal)" stroke="var(--surface)" stroke-width="3"/><text x="${x(Math.min(Math.max(S.budget, X0), X1)) - 10}" y="${y(RES.you.e.ppl) - 12}" text-anchor="end" font-size="12.5" font-weight="700" fill="var(--teal-dk)">You ${Rk(S.budget)}</text>`;
+    svg.innerHTML = s;
+    const lead = document.getElementById('curveLead');
+    if (RES.min != null && RES.opt != null && RES.optPlan) {
+      document.getElementById('curveTitle').textContent = `Every target is met from ${R(RES.min)}, and the return halves past ${Rk(RES.opt)}`;
+      lead.textContent = `Between the two, each extra R1m still buys at least half of what the average R1m buys. At ${Rk(RES.opt)} the plan reaches ${RES.optPlan.e.ppl.toFixed(1)}m people three or more times, ${Math.round((RES.optPlan.e.ppl / RES.you.e.ppl - 1) * 100)}% more than at ${Rk(S.budget)}.`;
+    } else if (!RES.partial && RES.min == null) {
+      document.getElementById('curveTitle').textContent = 'No budget up to R200m meets every target with these channels and weights';
+      lead.textContent = 'Lower a target, switch a channel back on or raise a channel weight.';
+    } else lead.textContent = 'Tracing the best plan at each budget.';
+  }
+
+  function planFor(v) { return v === 'opt' ? RES.optPlan : v === 'min' ? RES.minPlan : RES.you; }
+  function drawAud() {
+    const p = planFor(view) || RES.you, lab = view === 'opt' && RES.optPlan ? Rk(RES.opt) : view === 'min' && RES.minPlan ? R(RES.min) : Rk(S.budget);
+    const o = p.e.o, u = under(p);
+    document.getElementById('audTitle').textContent = u.length ? `At ${lab}, ${u.length} of ${S.on.filter(Boolean).length} audiences ${plural(u.length, 'sits', 'sit')} under target` : `At ${lab}, every audience in the plan meets its target`;
+    let r1lo = 1, r1hi = 0;
+    for (let k = 0; k < K; k++) for (const ph of [0, 1]) { r1lo = Math.min(r1lo, o[ph].R1[k]); r1hi = Math.max(r1hi, o[ph].R1[k]); }
+    document.getElementById('r1note').textContent = `Reached at least once: ${pc(r1lo)} to ${pc(r1hi)}`;
+    const TM = 0.8, bar = (lbl, v, t) => `<div class="bl"><span>${lbl}</span><div class="track"><div class="fill" style="width:${Math.min(v, TM) / TM * 100}%"></div><div class="mark" style="left:calc(${t / TM * 100}% - 1px)"></div></div><span class="num"><b style="color:var(--fg)">${pcf(v, t)}</b> target ${pc(t)}</span></div>`;
+    let h = '';
+    for (let k = 0; k < K; k++) {
+      const t = RES.M.tgt[k], off = !S.on[k];
+      const bad = !off && (o[0].R3[k] < t[0][1] - 5e-4 || o[1].R3[k] < t[1][1] - 5e-4 || o[0].R1[k] < t[0][0] - 5e-4 || o[1].R1[k] < t[1][0] - 5e-4);
+      const gap = Math.max(t[0][1] - o[0].R3[k], t[1][1] - o[1].R3[k]) * 100;
+      const st = off ? '<span class="status" style="background:var(--surface-2);color:var(--muted)">Not planned for</span>' : bad ? `<span class="status warn">${gap > 0.05 ? gap.toFixed(1) + ' points under' : 'Under 1+ floor'}</span>` : '<span class="status ok">Meets target</span>';
+      h += `<div class="ar"${off ? ' style="opacity:.55"' : ''}><div class="nm"><b>${DATA.names[k]}</b><span>${(DATA.TA[k] / 1e6).toFixed(1)}m banked adults</span></div><div class="bars">${bar('Before', o[0].R3[k], t[0][1])}${bar('During', o[1].R3[k], t[1][1])}</div>${st}</div>`;
+    }
+    document.getElementById('audRows').innerHTML = h;
+  }
+
+  function drawPlan() {
+    const p = planFor(view) || RES.you, lab = view === 'opt' && RES.optPlan ? Rk(RES.opt) : view === 'min' && RES.minPlan ? R(RES.min) : Rk(S.budget);
+    const b = p.b, h = p.h, W = p.W, srch = p.total - W;
+    const gsum = GROUPS.map(() => 0); let biz = 0;
+    for (let i = 0; i < L; i++) { gsum[gIdx(DATA.lines[i].group)] += b[i]; if (DATA.lines[i].focus === 'Business') biz += b[i]; }
+    const order = GROUPS.map((g, i) => i).sort((a, c) => gsum[c] - gsum[a]);
+    const LOW = { 'Radio': 'radio', 'Social': 'social', 'TV': 'TV', 'DOOH': 'digital out of home', 'Online video': 'online video', 'Display': 'display', 'Cinema': 'cinema', 'Influencers': 'influencers', 'LinkedIn': 'LinkedIn' };
+    const top = order.slice(0, 3).map(i => LOW[GROUPS[i].id]);
+    document.getElementById('planTitle').textContent = `The ${lab} plan leads with ${top[0]}, ${top[1]} and ${top[2]}, with ${pc(h)} of each channel's money in the holidays`;
+    const same = RES.optPlan && Math.abs(S.budget - RES.opt) < 0.25;
+    const cmp = view === 'you' && RES.optPlan && !same ? RES.optPlan : null;
+    document.getElementById('planLead').textContent = `${R(W)} of media in the reach plan plus ${R(srch)} of search. Business gets ${pc(biz / W)} of media. ${S.mode === 'man' ? 'You set the channel split, so the recommended plan keeps the same percentages and only the amounts change.' : 'The model chose the split within each channel\'s buyable range.'}` + (same ? ' Your budget is set to the recommended budget, so the two views show the same plan.' : cmp ? ` The last column shows the recommended ${Rk(RES.opt)} plan for comparison.` : '');
+    const cg = GROUPS.map(() => 0);
+    if (cmp) for (let i = 0; i < L; i++) cg[gIdx(DATA.lines[i].group)] += cmp.b[i];
+    const cc = v => cmp ? `<td class="r" style="color:var(--amber-dk)">${R(v)}</td>` : '';
+    document.getElementById('stack').innerHTML = order.filter(i => gsum[i] > 0.005).map(i => `<div style="width:${gsum[i] / W * 100}%;background:${GROUPS[i].col}" title="${GROUPS[i].label} ${pc(gsum[i] / W)}">${gsum[i] / W > 0.06 ? pc(gsum[i] / W) : ''}</div>`).join('');
+    document.getElementById('stackLegend').innerHTML = order.filter(i => gsum[i] > 0.005).map(i => `<span><i class="sw" style="background:${GROUPS[i].col}"></i>${GROUPS[i].label} ${R(gsum[i])}</span>`).join('');
+    let rows = `<tr><th>Line</th><th class="r">Before</th><th class="r">During</th><th class="r">Total</th><th class="r">Share</th>${cmp ? `<th class="r">At ${Rk(RES.opt)}</th>` : ''}</tr>`;
+    let tp = 0, th = 0;
+    for (const gi of order) {
+      if (gsum[gi] < 0.005 && !(cmp && cg[gi] >= 0.005)) continue;
+      const ls = DATA.lines.map((l, i) => i).filter(i => gIdx(DATA.lines[i].group) === gi && (b[i] >= 0.05 || (cmp && cmp.b[i] >= 0.05))).sort((a, c) => b[c] - b[a]);
+      rows += `<tr class="grp"><td>${GROUPS[gi].label}</td><td class="r">${R(gsum[gi] * (1 - h))}</td><td class="r">${R(gsum[gi] * h)}</td><td class="r">${R(gsum[gi])}</td><td class="r">${pc(gsum[gi] / p.total)}</td>${cc(cg[gi])}</tr>`;
+      for (const i of ls) rows += `<tr><td>${DATA.lines[i].name}${DATA.lines[i].focus === 'Business' ? '<span class="tag">Business</span>' : ''}</td><td class="r">${R(b[i] * (1 - h))}</td><td class="r">${R(b[i] * h)}</td><td class="r">${R(b[i])}</td><td class="r">${pc(b[i] / p.total)}</td>${cmp ? cc(cmp.b[i]) : ''}</tr>`;
+      tp += gsum[gi] * (1 - h); th += gsum[gi] * h;
+    }
+    rows += `<tr class="grp"><td>Search</td><td class="r">${R(srch * (1 - h))}</td><td class="r">${R(srch * h)}</td><td class="r">${R(srch)}</td><td class="r">${pc(srch / p.total)}</td>${cmp ? cc(cmp.total - cmp.W) : ''}</tr>`;
+    rows += `<tr class="tot"><td>Total TTL</td><td class="r">${R(tp + srch * (1 - h))}</td><td class="r">${R(th + srch * h)}</td><td class="r">${R(p.total)}</td><td class="r">100%</td>${cmp ? cc(cmp.total) : ''}</tr>`;
+    document.getElementById('planTable').innerHTML = rows;
+  }
+
+
+  const LOW = { 'Radio': 'radio', 'Social': 'social', 'TV': 'TV', 'DOOH': 'digital out of home', 'Online video': 'online video', 'Display': 'display', 'Cinema': 'cinema', 'Influencers': 'influencers', 'LinkedIn': 'LinkedIn' };
+  function viewLabel() { return view === 'opt' && RES.optPlan ? Rk(RES.opt) : view === 'min' && RES.minPlan ? R(RES.min) : Rk(S.budget); }
+
+  // ---------- regional view ----------
+  const REG = { sel: new Set(['KwaZulu-Natal']), tilt: 0 };
+  const TVL = new Set(DATA.lines.map((l, i) => l.group === 'TV' ? i : -1).filter(i => i >= 0));
+  function regCalc(p, tilt) {
+    const M = RES.M, P = DATA.prov, tot = DATA.wk[0] + DATA.wk[1];
+    const t = P.map(pr => REG.sel.has(pr.name) ? tilt : 0);
+    const D = DATA.K.map((_, k) => P.reduce((a, pr, j) => a + pr.share[k] * (1 + t[j]), 0));
+    const [bp, bh] = [Float64Array.from(p.b, v => v * (1 - p.h)), Float64Array.from(p.b, v => v * p.h)];
+    return P.map((pr, j) => {
+      const f = DATA.K.map((_, k) => (1 + t[j]) / D[k]);
+      const coef = Float64Array.from(M.coef);
+      for (let i = 0; i < L; i++) if (!TVL.has(i)) for (let k = 0; k < K; k++) coef[i * K + k] *= f[k];
+      const o = E.rf(Object.assign({}, M, { coef }), bp, bh);
+      let ppl = 0; for (const ph of [0, 1]) for (let k = 0; k < K; k++) if (S.on[k]) ppl += DATA.wk[ph] / tot * o[ph].R3[k] * DATA.TA[k] * pr.share[k];
+      let money = 0;
+      for (let i = 0; i < L; i++) { const c = DATA.lines[i].comp, cs = c.reduce((a, b) => a + b, 0); let m = 0; for (let k = 0; k < K; k++) m += c[k] / cs * pr.share[k] * (TVL.has(i) ? 1 : f[k]); money += p.b[i] * m; }
+      return { pr, ppl: ppl / 1e6, money, s3: o[0].R3[0] };
+    });
+  }
+  function drawReg() {
+    const p = planFor(view) || RES.you;
+    const base = regCalc(p, 0), tl = REG.tilt / 100, tilted = tl > 0 ? regCalc(p, tl) : base;
+    const taAll = DATA.K.reduce((a, _, k) => a + DATA.TA[k], 0);
+    const sel = [...REG.sel];
+    let gain = 0, loss = 0; base.forEach((b, j) => { const d = tilted[j].ppl - b.ppl; if (REG.sel.has(b.pr.name)) gain += d; else loss += d; });
+    const fk = v => (Math.abs(v) * 1000 >= 1 ? Math.round(Math.abs(v) * 1000) + 'k' : Math.round(Math.abs(v) * 1e6));
+    if (tl > 0 && sel.length) {
+      document.getElementById('regTitle').textContent = `${REG.tilt}% more weight in ${sel.join(' and ')} adds ${fk(gain)} people reached 3+ times there and costs ${fk(loss)} elsewhere`;
+      document.getElementById('regLead').textContent = `The national total ${gain + loss >= 0 ? 'rises' : 'falls'} by ${fk(gain + loss)} people, because reach builds more slowly where weight is already heavy. The budget doesn't change.`;
+    } else {
+      const gk = base.filter(b => b.pr.name === 'Gauteng' || b.pr.name === 'KwaZulu-Natal').reduce((a, b) => a + b.money, 0);
+      const steer = p.b.reduce((a, v, i) => a + (TVL.has(i) ? 0 : v), 0);
+      document.getElementById('regTitle').textContent = `Gauteng and KwaZulu-Natal take ${pc(gk / p.W)} of media, and ${R(steer)} outside TV can be tilted towards priority provinces`;
+      document.getElementById('regLead').textContent = 'Pick provinces and add weight to see what it gains there and costs elsewhere. KwaZulu-Natal is selected because FNB\'s personal market share there fell furthest, from 20% to 13%.';
+    }
+    let h = `<tr><th>Province</th><th class="r">Banked adults</th><th class="r">Media</th><th class="r">People 3+</th>${tl > 0 ? '<th class="r">Change</th>' : ''}<th class="r">Strivers 3+ before</th><th class="r">FNB personal share</th><th>FNB regional job</th></tr>`;
+    base.forEach((b, j) => {
+      const tv = tilted[j], ta = DATA.K.reduce((a, _, k) => a + DATA.TA[k] * b.pr.share[k], 0), d = tv.ppl - b.ppl;
+      h += `<tr${REG.sel.has(b.pr.name) && tl > 0 ? ' style="background:var(--pale)"' : ''}><td><b style="color:var(--fg)">${b.pr.name}</b></td><td class="r">${pc(ta / taAll)}</td><td class="r">${R(tv.money)}</td><td class="r">${tv.ppl.toFixed(2)}m</td>${tl > 0 ? `<td class="r ${d >= 0 ? 'up' : 'down'}">${d >= 0 ? '+' : '-'}${fk(d)}</td>` : ''}<td class="r">${pc(tv.s3)}</td><td class="r">${b.pr.fnb ? b.pr.fnb[0] + '% to ' + b.pr.fnb[1] + '%' : ''}</td><td>${b.pr.job || 'Not a focus region'}</td></tr>`;
+    });
+    document.getElementById('regTable').innerHTML = h;
+  }
+  document.getElementById('provChips').innerHTML = DATA.prov.map(pr => `<button class="chip" aria-pressed="${REG.sel.has(pr.name)}" data-prov="${pr.name}">${pr.name}</button>`).join('');
+  document.querySelectorAll('[data-prov]').forEach(c => c.onclick = () => { const n = c.dataset.prov; REG.sel.has(n) ? REG.sel.delete(n) : REG.sel.add(n); c.setAttribute('aria-pressed', REG.sel.has(n)); drawReg(); });
+  document.getElementById('tilt').oninput = e => { REG.tilt = +e.target.value; document.getElementById('tiltOut').textContent = REG.tilt + '%'; drawReg(); };
+
+  // ---------- media plan by audience ----------
+  let byMode = 'r';
+  const SHORTG = { 'Radio': 'Radio', 'Social': 'Social', 'TV': 'TV', 'DOOH': 'DOOH', 'Online video': 'Video', 'Display': 'Display', 'Cinema': 'Cinema', 'Influencers': 'Influencers', 'LinkedIn': 'LinkedIn' };
+  const cellR = v => v < 0.05 ? '-' : R(v);
+  function drawBy() {
+    const p = planFor(view) || RES.you, o = p.e.o, tot = DATA.wk[0] + DATA.wk[1];
+    const money = DATA.K.map(() => 0), mat = DATA.K.map(() => GROUPS.map(() => 0));
+    for (let i = 0; i < L; i++) {
+      const c = DATA.lines[i].comp, cs = c.reduce((a, b) => a + b, 0), g = gIdx(DATA.lines[i].group);
+      for (let k = 0; k < K; k++) { const m = p.b[i] * c[k] / cs; money[k] += m; mat[k][g] += m; }
+    }
+    const ppl = DATA.K.map((_, k) => (DATA.wk[0] / tot * o[0].R3[k] + DATA.wk[1] / tot * o[1].R3[k]) * DATA.TA[k] / 1e6);
+    const pplTot = ppl.reduce((a, b, k) => a + (S.on[k] ? b : 0), 0);
+    const short = n => n.replace('Mass-Market ', '').replace('Established ', '').replace(' Providers', '');
+    const lab = viewLabel();
+    document.getElementById('byTitle').textContent = `At ${lab}, Strivers take ${pc(money[0] / p.W)} of media and make up ${pc(ppl[0] / pplTot)} of the people reached 3+ times`;
+    const cheapest = DATA.K.map((_, k) => k).filter(k => S.on[k] && ppl[k] > 0).sort((a, b) => money[a] / ppl[a] - money[b] / ppl[b]);
+    document.getElementById('byLead').textContent = `${R(p.W)} of media, split by where each line's impressions land. Reaching a Striver three times costs about R${(money[0] / ppl[0]).toFixed(2)}; reaching one of the ${short(DATA.names[cheapest[cheapest.length - 1]])} costs about R${(money[cheapest[cheapest.length - 1]] / ppl[cheapest[cheapest.length - 1]]).toFixed(2)}, because they're fewer and harder to find.`;
+    let h = `<tr><th>Audience</th><th class="r">Media assigned</th><th class="r">Share of media</th><th class="r">People reached 3+</th><th class="r">Share of people</th><th class="r">Cost per person</th></tr>`;
+    DATA.K.forEach((_, k) => {
+      const top = GROUPS.map((g, gi) => [gi, mat[k][gi]]).sort((a, b) => b[1] - a[1]).slice(0, 3).filter(x => x[1] > 0.01).map(x => LOW[GROUPS[x[0]].id]);
+      h += `<tr${S.on[k] ? '' : ' style="opacity:.55"'}><td><b style="color:var(--fg)">${DATA.names[k]}</b>${DATA.lines.length && k === 4 ? '<span class="tag">Business</span>' : ''}</td><td class="r"><b style="color:var(--fg)">${R(money[k])}</b></td><td class="r">${pc(money[k] / p.W)}</td><td class="r">${ppl[k].toFixed(1)}m</td><td class="r">${S.on[k] ? pc(ppl[k] / pplTot) : ''}</td><td class="r">R${(money[k] / Math.max(ppl[k], 1e-6)).toFixed(2)}</td></tr>`;
+    });
+    h += `<tr class="tot"><td>All five audiences</td><td class="r">${R(p.W)}</td><td class="r">100%</td><td class="r">${pplTot.toFixed(1)}m</td><td class="r">100%</td><td class="r">R${(p.W / pplTot).toFixed(2)}</td></tr>`;
+    document.getElementById('byTable').innerHTML = h;
+    const gOrder = GROUPS.map((g, gi) => gi).sort((a, b) => DATA.K.reduce((s, _, k) => s + mat[k][b], 0) - DATA.K.reduce((s, _, k) => s + mat[k][a], 0)).filter(gi => DATA.K.some((_, k) => mat[k][gi] > 0.005));
+    const mx = Math.max(...DATA.K.flatMap((_, k) => gOrder.map(gi => byMode === 'r' ? mat[k][gi] : mat[k][gi] / money[k])));
+    let m = `<tr><th>Audience</th>${gOrder.map(gi => `<th>${SHORTG[GROUPS[gi].id]}</th>`).join('')}<th>Total</th></tr>`;
+    DATA.K.forEach((_, k) => {
+      m += `<tr><td><b style="color:var(--fg)">${short(DATA.names[k])}</b></td>` + gOrder.map(gi => {
+        const v = byMode === 'r' ? mat[k][gi] : mat[k][gi] / money[k], a = Math.min(v / mx, 1);
+        return `<td class="heat" style="background:color-mix(in srgb, var(--teal) ${Math.round(a * 55)}%, transparent);${a > 0.6 ? 'color:#fff;font-weight:700' : ''}">${byMode === 'r' ? cellR(v) : (v < 0.005 ? '-' : pc(v))}</td>`;
+      }).join('') + `<td class="r"><b style="color:var(--fg)">${byMode === 'r' ? R(money[k]) : '100%'}</b></td></tr>`;
+    });
+    m += `<tr class="tot"><td>Total</td>${gOrder.map(gi => `<td class="r">${R(DATA.K.reduce((s, _, k) => s + mat[k][gi], 0))}</td>`).join('')}<td class="r">${R(p.W)}</td></tr>`;
+    document.getElementById('byMatrix').innerHTML = m;
+  }
+  document.querySelectorAll('[data-by]').forEach(bt => bt.onclick = () => { byMode = bt.dataset.by; document.querySelectorAll('[data-by]').forEach(x => x.setAttribute('aria-pressed', x === bt)); drawBy(); });
+
+  // ---------- controls ----------
+  function slider(id, label, min, max, step, val, fmt, why) {
+    return `<div class="ctl"><div class="ctl-top"><label for="${id}">${label}</label><output id="${id}Out" class="num">${fmt(val)}</output></div><input type="range" id="${id}" min="${min}" max="${max}" step="${step}" value="${val}">${why ? `<span class="why">${why}</span>` : ''}</div>`;
+  }
+  function buildWeights() {
+    document.getElementById('weightCtl').innerHTML = GROUPS.map((g, i) => slider('w' + i, g.label, 0, 1.5, 0.05, S.gw[i], v => (+v).toFixed(2), g.why)).join('');
+    GROUPS.forEach((g, i) => { const el = document.getElementById('w' + i); el.oninput = () => { S.gw[i] = +el.value; document.getElementById('w' + i + 'Out').textContent = (+el.value).toFixed(2); changed(); }; });
+    document.getElementById('presetSpend').classList.toggle('on', S.preset === 'spend');
+    document.getElementById('presetBrand').classList.toggle('on', S.preset === 'brand');
+  }
+  function buildAud() {
+    document.getElementById('audCtl').innerHTML = DATA.K.map((k, i) => `<div class="aud"><div class="aud-head"><b>${DATA.names[i]}</b><label class="switch"><input type="checkbox" id="on${i}" ${S.on[i] ? 'checked' : ''}> In the plan</label></div><span class="why">${(DATA.TA[i] / 1e6).toFixed(1)}m banked adults. ${TIER_LAB[DATA.tier[i]]} tier.</span><div class="grid2">${slider('tp' + i, 'Before holidays', 5, 70, 1, Math.round(S.perAud[i][0] * 100), v => v + '%')}${slider('th' + i, 'During holidays', 5, 70, 1, Math.round(S.perAud[i][1] * 100), v => v + '%')}</div></div>`).join('');
+    DATA.K.forEach((k, i) => {
+      document.getElementById('on' + i).onchange = e => { S.on[i] = e.target.checked ? 1 : 0; changed(); };
+      ['tp', 'th'].forEach((p, j) => { const el = document.getElementById(p + i); el.oninput = () => { S.perAud[i][j] = +el.value / 100; document.getElementById(p + i + 'Out').textContent = el.value + '%'; changed(); }; });
+    });
+  }
+  function buildSplit() {
+    const man = S.mode === 'man';
+    document.getElementById('modeOpt').setAttribute('aria-pressed', !man); document.getElementById('modeMan').setAttribute('aria-pressed', man);
+    if (!man) {
+      document.getElementById('splitHint').textContent = 'The model spreads money across channels within each one\'s buyable range. Switch a channel off to plan without it.';
+      document.getElementById('splitCtl').innerHTML = GROUPS.map((g, i) => `<label class="switch" style="justify-content:space-between;display:flex;color:var(--fg);font-weight:700"><span><i class="sw" style="background:${g.col}"></i> ${g.label}</span><input type="checkbox" id="g${i}" ${S.gOn[i] ? 'checked' : ''}></label>`).join('');
+      GROUPS.forEach((g, i) => document.getElementById('g' + i).onchange = e => { S.gOn[i] = e.target.checked; changed(); });
+    } else {
+      document.getElementById('splitHint').textContent = 'Set each channel\'s share of media. Shares are scaled to add up to 100%, and the model shows what your split reaches and what budget it needs.';
+      const tot = () => S.man.reduce((a, b) => a + b, 0);
+      document.getElementById('splitCtl').innerHTML = `<div class="sum100" id="manSum"></div>` + GROUPS.map((g, i) => slider('m' + i, g.label, 0, 60, 0.5, S.man[i], v => (+v).toFixed(1) + '%')).join('');
+      const upd = () => { const t = tot(); document.getElementById('manSum').textContent = `Shares add up to ${t.toFixed(1)}%` + (Math.abs(t - 100) > 0.5 ? ', scaled to 100% in the plan' : ''); };
+      upd();
+      GROUPS.forEach((g, i) => { const el = document.getElementById('m' + i); el.oninput = () => { S.man[i] = +el.value; document.getElementById('m' + i + 'Out').textContent = (+el.value).toFixed(1) + '%'; upd(); changed(); }; });
+    }
+  }
+  function buildRates() {
+    document.getElementById('rateCtl').innerHTML = GROUPS.map((g, i) => `<div class="ctl-top"><label for="c${i}">${g.label}</label><span class="row"><span style="color:var(--muted)">R</span><input type="number" id="c${i}" min="1" max="2000" step="1" value="${Math.round(S.cpm[i])}"></span></div>`).join('');
+    GROUPS.forEach((g, i) => { const el = document.getElementById('c' + i); el.onchange = () => { const v = Math.max(1, +el.value || S.cpm[i]); S.cpm[i] = v; el.value = v; changed(); }; });
+  }
+  function setManualFromPlan() {
+    const p = RES.optPlan || RES.you, gsum = GROUPS.map(() => 0);
+    for (let i = 0; i < L; i++) gsum[gIdx(DATA.lines[i].group)] += p.b[i];
+    S.within = DATA.lines.map((l, i) => { const g = gIdx(l.group); if (gsum[g] > 1e-6) return p.b[i] / gsum[g]; const n = DATA.lines.filter(x => x.group === l.group).length; return 1 / n; });
+    S.man = gsum.map(v => Math.round(v / p.W * 1000) / 10);
+  }
+  function syncBudget() {
+    const b = document.getElementById('budget'); b.value = S.budget; document.getElementById('budgetOut').textContent = Rk(S.budget);
+    document.getElementById('search').value = S.search; document.getElementById('searchOut').textContent = S.search + '%';
+    document.getElementById('holAuto').checked = S.holAuto; document.getElementById('hol').value = S.hol; document.getElementById('hol').disabled = S.holAuto;
+    document.getElementById('holOut').textContent = S.holAuto ? 'Model' : S.hol + '%';
+    document.getElementById('bshare').value = S.bshare; document.getElementById('bshareOut').textContent = S.bshare + '%';
+  }
+  function buildAll() { syncBudget(); buildWeights(); buildAud(); buildSplit(); buildRates(); }
+
+  document.querySelectorAll('.tab').forEach(t => t.onclick = () => {
+    document.querySelectorAll('.tab').forEach(x => x.setAttribute('aria-selected', x === t));
+    document.querySelectorAll('.pane[data-pane]').forEach(p => p.hidden = p.dataset.pane !== t.dataset.tab);
+  });
+  document.getElementById('budget').oninput = e => { S.budget = +e.target.value; document.getElementById('budgetOut').textContent = Rk(S.budget); const M = RES.M || cfg(); RES.you = planAt(M, S.budget); renderAll(); };
+  document.getElementById('search').oninput = e => { S.search = +e.target.value; document.getElementById('searchOut').textContent = S.search + '%'; changed(); };
+  document.getElementById('holAuto').onchange = e => { S.holAuto = e.target.checked; syncBudget(); changed(); };
+  document.getElementById('hol').oninput = e => { S.hol = +e.target.value; document.getElementById('holOut').textContent = S.hol + '%'; changed(); };
+  document.getElementById('bshare').oninput = e => { S.bshare = +e.target.value; document.getElementById('bshareOut').textContent = S.bshare + '%'; changed(); };
+  document.getElementById('toMin').onclick = () => { if (RES.min != null) { S.budget = Math.ceil(RES.min * 2) / 2; syncBudget(); RES.you = planAt(RES.M, S.budget); renderAll(); } };
+  document.getElementById('toOpt').onclick = () => { if (RES.opt != null) { S.budget = RES.opt; syncBudget(); RES.you = planAt(RES.M, S.budget); renderAll(); } };
+  document.getElementById('to32').onclick = () => { S.budget = 32; syncBudget(); RES.you = planAt(RES.M, S.budget); renderAll(); };
+  document.getElementById('resetAll').onclick = () => { S = DEFAULT(); buildAll(); recompute(); };
+  document.getElementById('presetSpend').onclick = () => { S.preset = 'spend'; S.gw = GROUPS.map(g => SPEND[lineIdx(g.main)]); buildWeights(); changed(); };
+  document.getElementById('presetBrand').onclick = () => { S.preset = 'brand'; S.gw = GROUPS.map(g => BRAND[lineIdx(g.main)]); buildWeights(); changed(); };
+  document.getElementById('modeOpt').onclick = () => { S.mode = 'opt'; buildSplit(); changed(); };
+  document.getElementById('modeMan').onclick = () => { if (!S.man) setManualFromPlan(); S.mode = 'man'; buildSplit(); changed(); };
+  document.querySelectorAll('[data-view]').forEach(bt => bt.onclick = () => {
+    view = bt.dataset.view; document.querySelectorAll('[data-view]').forEach(x => x.setAttribute('aria-pressed', x === bt)); drawAud(); drawPlan(); drawBy(); drawReg();
+  });
+
+  buildAll(); recompute();
+})();
+</script>
+
+</body></html>
