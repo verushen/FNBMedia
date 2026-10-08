@@ -94,7 +94,7 @@ input[type=number] { width: 90px; font: 600 14px var(--text); padding: 5px 8px; 
 .stack div { display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #fff; min-width: 0; overflow: hidden; white-space: nowrap }
 .tablewrap { overflow-x: auto; margin-top: 12px }
 table { border-collapse: collapse; width: 100%; font-size: 13.5px; font-variant-numeric: tabular-nums }
-th { text-align: left; font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); padding: 8px; border-bottom: 2px solid var(--line); white-space: nowrap }
+th { text-align: left; font-size: 11.5px; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); padding: 8px; border-bottom: 2px solid var(--line); vertical-align: bottom; line-height: 1.25 }
 td { padding: 7px 8px; border-bottom: 1px solid var(--line); color: var(--body) }
 td.r, th.r { text-align: right }
 tr.grp td { background: var(--surface-2); font-weight: 700; color: var(--fg) }
@@ -120,9 +120,15 @@ tr.tot td { font-weight: 800; color: var(--fg); border-top: 2px solid var(--line
 .up { color: var(--teal-dk); font-weight: 700 } .down { color: var(--amber-dk); font-weight: 700 }
 .prog { font-size: 13px; color: var(--muted) }
 td.heat { text-align: right; font-variant-numeric: tabular-nums }
-#byMatrix { table-layout: fixed }
-#byMatrix th:first-child, #byMatrix td:first-child { width: 150px }
-#byMatrix th { white-space: normal; font-size: 11px; letter-spacing: .02em }
+#byMatrix { min-width: 760px }
+#byMatrix th { white-space: nowrap; font-size: 11px; letter-spacing: .03em }
+#byMatrix td, #byMatrix th { padding: 7px 6px; white-space: nowrap }
+#byMatrix td:first-child { white-space: normal; min-width: 120px }
+#byTable { min-width: 560px }
+#regTable { min-width: 820px }
+#regTable td:first-child { white-space: nowrap }
+#byTable td:first-child { white-space: nowrap }
+#planTable { min-width: 480px }
 #byMatrix th:not(:first-child) { text-align: right }
 </style>
 
